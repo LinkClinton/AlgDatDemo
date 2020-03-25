@@ -364,7 +364,7 @@ void max_command(
 
 int main() {
 	list = std::make_shared<skip_list<int, std::string>>();
-	
+
 	runtime->render()->callbacks["update_skip_list_graph"] = purezento::render_callback(update_skip_list_graph, nullptr);
 
 	runtime->console()->callbacks["insert"] = purezento::command_callback(insert_command, nullptr);
