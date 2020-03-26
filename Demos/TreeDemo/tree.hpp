@@ -40,13 +40,17 @@ public:
 
 	void print();
 
+	bool in(int node);
+	
 	auto to_binary_tree()->std::shared_ptr<binary_tree>;
 public:
 	// 0 indicate the virtual root
 	std::vector<tree_node> nodes;
 private:
-	void search(const int node, int& output);
+	void search(int node, int& output);
 
+	bool search_in(int node, int target);
+	
 	void shift_to_fit(size_t target);
 };
 
@@ -129,6 +133,11 @@ inline void tree::print() {
 	std::cout << std::endl;
 }
 
+inline bool tree::in(int node)
+{
+	return search_in(0, node);
+}
+
 inline auto tree::to_binary_tree() -> std::shared_ptr<binary_tree>
 {
 	auto tree = std::make_shared<binary_tree>(nodes.size() - 1, *nodes[0].children.begin());
@@ -152,12 +161,22 @@ inline auto tree::to_binary_tree() -> std::shared_ptr<binary_tree>
 	return tree;
 }
 
-inline void tree::search(const int node, int& output)
+inline void tree::search(int node, int& output)
 {
 	output = output ^ nodes[node].key;
 
 	for (const auto& child : nodes[node].children)
 		search(child, output);
+}
+
+inline bool tree::search_in(int node, int target)
+{
+	if (node == target) return true;
+
+	for (const auto& child : nodes[node].children) 
+		if (search_in(child, target)) return true;
+
+	return false;
 }
 
 inline void tree::shift_to_fit(size_t target)
