@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 
 template <typename T, typename Compare = std::less<T>>
@@ -10,11 +11,13 @@ public:
 public:
 	explicit competition_tree(const std::vector<value_type>& values);
 
-	void replay(const value_type& value);
+	void replay(const value_type& value = std::numeric_limits<value_type>::max());
 	
 	value_type top_value() const noexcept;
 
 	identity top_id() const noexcept;
+
+	size_t size() const noexcept;
 private:
 	identity winner(const identity& index0, const identity& index1) const noexcept;
 
@@ -88,15 +91,21 @@ typename competition_tree<T, Compare>::identity competition_tree<T, Compare>::to
 }
 
 template <typename T, typename Compare>
+size_t competition_tree<T, Compare>::size() const noexcept
+{
+	return mPool.size();
+}
+
+template <typename T, typename Compare>
 typename competition_tree<T, Compare>::identity competition_tree<T, Compare>::winner(
 	const identity& index0, const identity& index1) const noexcept
 {
-	return mCompare(mPool[index0], mPool[index1]) ? mWinner[index0] : mWinner[index1];
+	return mCompare(mPool[index0], mPool[index1]) ? index0 : index1;
 }
 
 template <typename T, typename Compare>
 typename competition_tree<T, Compare>::identity competition_tree<T, Compare>::loser(
 	const identity& index0, const identity& index1) const noexcept
 {
-	return mCompare(mPool[index0], mPool[index1]) ? mWinner[index1] : mWinner[index0];
+	return mCompare(mPool[index0], mPool[index1]) ? index1 : index0;
 }
