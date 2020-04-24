@@ -76,6 +76,8 @@ private:
 	void push_graph();
 
 	bool push_colors(identity x, size_t count);
+
+	bool check(identity block, identity color) const;
 	
 	int block_index(int x, int y) const;
 
@@ -238,27 +240,29 @@ void checkerboard::push_graph()
 
 bool checkerboard::push_colors(identity x, size_t count)
 {
-	for (identity color = 0; color < 4; color++) {
+	if (x == mBlocks.size()) return true;
+	
+	for (identity color = 0; color < 3; color++) {
 		mBlockColors[x] = color;
 
-		auto success = true;
+		if (!check(x, mBlockColors[x])) continue;
 
-		for (const auto& next : mGraph[x]) 
-			if (mBlockColors[next] == color) { success = false; break; }
-
-		if (success && count == mBlocks.size() - 1) return true;
-		if (!success) continue;
-		
-		for (const auto& next : mGraph[x]) {
-			if (mBlockColors[next] != -1) continue;
-			if (push_colors(next, count + 1)) return true;
-		}
+		if (push_colors(x + 1, count)) return true;
 	}
 
 	mBlockColors[x] = -1;
 	
 	return false;
 }
+
+bool checkerboard::check(identity block, identity color) const
+{
+	for (const auto& next : mGraph[block])
+		if (mBlockColors[next] == color) return false;
+
+	return true;
+}
+
 
 int checkerboard::block_index(int x, int y) const
 {
@@ -316,7 +320,7 @@ void board_config(
 	need_update = need_update ^ ImGui::InputInt("x", &block_x);
 	need_update = need_update ^ ImGui::InputInt("y", &block_y);
 
-	k = std::min(std::max(k, 1), 5);
+	k = std::min(std::max(k, 1), 6);
 
 	block_x = std::min(std::max(block_x, 0), (1 << k) - 1);
 	block_y = std::min(std::max(block_y, 0), (1 << k) - 1);
