@@ -338,3 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Demos/SortDemo/input
+/Demos/SortDemo/disk_gen
+/Demos/SortDemo/a.out
